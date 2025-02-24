@@ -289,9 +289,9 @@ services:
     image: supabase/logflare:1.4.0
     healthcheck:
       test: [ "CMD", "curl", "http://localhost:4000/health" ]
-      timeout: 5s
-      interval: 5s
-      retries: 10
+      timeout: 10s
+      interval: 10s
+      retries: 15
       start_period: 30s
     restart: unless-stopped
     depends_on:
@@ -436,9 +436,6 @@ services:
         "-c",
         "/app/bin/migrate && /app/bin/supavisor eval \"$$(cat /etc/pooler/pooler.exs)\" && /app/bin/server"
       ]
-
-volumes:
-  db-config:
 
 volumes:
   db-data-${INSTANCE_ID}:
