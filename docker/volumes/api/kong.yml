@@ -179,8 +179,8 @@ services:
 
   ## Edge Functions routes
   - name: functions-v1
-    _comment: 'Edge Functions: /functions/v1/* -> http://edge-functions:8081/*'
-    url: http://edge-functions:8081/
+    _comment: 'Edge Functions: /functions/v1/* -> http://functions:9000/*'
+    url: http://functions:9000/
     routes:
       - name: functions-v1-all
         strip_path: true
