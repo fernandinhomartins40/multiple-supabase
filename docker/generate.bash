@@ -15,6 +15,7 @@ export SERVICE_ROLE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.ewogICJyb2xlIjogInN
 #
 export DASHBOARD_USERNAME=admin #user
 export DASHBOARD_PASSWORD=$(openssl rand -hex 8) #if no password is set, a random one will be generated
+export SECRET_KEY_BASE=$(openssl rand -base64 48)
 export POSTGRES_DB=postgres 
 
 # Export necessary variables for kong.yml
@@ -22,8 +23,8 @@ export SUPABASE_ANON_KEY=${ANON_KEY}
 export SUPABASE_SERVICE_KEY=${SERVICE_ROLE_KEY}
 
 # Generate random non-conflicting ports, do not change
-export POSTGRES_PORT=5432 
-export POSTGRES_PORT_EXT=54$(shuf -i 10-99 -n 1) 
+export POSTGRES_PORT=54$(shuf -i 10-99 -n 1) 
+#export POSTGRES_PORT_EXT=54$(shuf -i 10-99 -n 1) 
 export KONG_HTTP_PORT=80$(shuf -i 10-99 -n 1)
 export KONG_HTTPS_PORT=84$(shuf -i 10-99 -n 1)
 #export STUDIO_PORT=30$(shuf -i 10-99 -n 1)
@@ -77,6 +78,11 @@ mkdir -p volumes-${INSTANCE_ID}/api
 ## Copy all contents of the db folder, including subdirectories and specific files
 if [ -d "volumes/db/" ]; then
   cp -a volumes/db/. volumes-${INSTANCE_ID}/db/
+fi
+
+## Copy all contents of the pooler folder, including subdirectories and specific files
+if [ -d "volumes/pooler/" ]; then
+  cp -a volumes/pooler/. volumes-${INSTANCE_ID}/pooler/
 fi
 
 ## Copy function files (if any)
