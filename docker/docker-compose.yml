@@ -300,7 +300,7 @@ services:
     environment:
       LOGFLARE_NODE_HOST: 127.0.0.1
       DB_USERNAME: supabase_admin
-      DB_DATABASE: ${POSTGRES_DB}
+      DB_DATABASE: _supabase
       DB_HOSTNAME: db
       DB_PORT: ${POSTGRES_PORT}
       DB_PASSWORD: ${POSTGRES_PASSWORD}
@@ -318,7 +318,7 @@ services:
 
   db:
     container_name: supabase-db-${INSTANCE_ID}
-    image: supabase/postgres:15.1.1.78
+    image: supabase/postgres:15.8.1.060
     healthcheck:
       test: ["CMD", "pg_isready", "-U", "postgres", "-h", "localhost"]
       interval: 5s
@@ -334,8 +334,8 @@ services:
       - -c
       - log_min_messages=fatal
     restart: unless-stopped
-    ports:
-      - "${POSTGRES_PORT_EXT}:${POSTGRES_PORT}"
+    #ports:
+    #  - "${POSTGRES_PORT_EXT}:${POSTGRES_PORT}"
     environment:
       POSTGRES_HOST: /var/run/postgresql
       PGPORT: ${POSTGRES_PORT}
@@ -357,9 +357,13 @@ services:
       # PGDATA directory is persisted between restarts
       - ./volumes-${INSTANCE_ID}/db/data:/var/lib/postgresql/data:Z
       # Changes required for Analytics support
-      - ./volumes-${INSTANCE_ID}/db/logs.sql:/docker-entrypoint-initdb.d/migrations/99-logs.sql:Z
+      - ./volumes-${INSTANCE_ID}/db/_supabase.sql:/docker-entrypoint-initdb.d/migrations/97-_supabase.sql:Z
       # Use named volume to persist pgsodium decryption key between restarts
-      #- ./volumes-${INSTANCE_ID}/db/config:/etc/postgresql-custom
+      - ./volumes-${INSTANCE_ID}/db/logs.sql:/docker-entrypoint-initdb.d/migrations/99-logs.sql:Z
+      # Changes required for Pooler support
+      - ./volumes-{INSTANCE_ID}/db/pooler.sql:/docker-entrypoint-initdb.d/migrations/99-pooler.sql:Z
+      # Use named volume to persist pgsodium decryption key between restarts
+      - db-config:/etc/postgresql-custom
 
   vector:
       container_name: supabase-vector-${INSTANCE_ID}
